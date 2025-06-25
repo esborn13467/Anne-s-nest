@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anne's Safe Nest</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #fdf2f8, #e4d9f7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 30px;
+      min-height: 100vh;
+      color: #4b355b;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    p {
+      max-width: 600px;
+      text-align: center;
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    button {
+      background-color: #c084fc;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #a855f7;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 500px;
+      margin-top: 20px;
+      display: none;
+      text-align: center;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #7e22ce;
+    }
+
+    .card p {
+      color: #5b436a;
+    }
+
+    textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .journal {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    #entryList li {
+      background: #fff5fc;
+      padding: 10px;
+      margin: 8px 0;
+      border-left: 4px solid #db5ea7;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #947ba5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Anne's Safe Nest 🕊️</h1>
+  <p>You're safe here. This space is just for you — for the heavy days, the sad ones, or the ones you just need to breathe through.</p>
+
+  <div class="button-group">
+    <button onclick="showCard('sad')">🌧️ I’m sad</button>
+    <button onclick="showCard('panic')">🌪️ I feel panic</button>
+    <button onclick="showCard('shame')">🖤 I feel shame</button>
+    <button onclick="showCard('guilt')">💔 I feel guilty</button>
+    <button onclick="showCard('safe')">🌸 I want to feel safe again</button>
+    <button onclick="showCard('esborn')">🧡 What would Esborn say?</button>
+  </div>
+
+  <div class="card" id="sad">
+    <h2>It’s okay to feel sad</h2>
+    <p>Your sadness is not a burden — it’s a sign of your depth. Let yourself feel. Then gently bring yourself back to softness.</p>
+  </div>
+
+  <div class="card" id="panic">
+    <h2>Let’s breathe together</h2>
+    <p>In through the nose... hold... out through the mouth. Again. You are okay. You are not alone. You are not in danger right now.</p>
+  </div>
+
+  <div class="card" id="shame">
+    <h2>You are not broken</h2>
+    <p>The shame you feel does not belong to you — it was passed to you by people who hurt you. You are worthy of love exactly as you are.</p>
+  </div>
+
+  <div class="card" id="guilt">
+    <h2>Guilt is not punishment</h2>
+    <p>Anne, you are not meant to suffer to make things right. You cared, you loved, and you didn’t act from malice. What you feel is empathy — not failure. You deserve healing too.</p>
+  </div>
+
+  <div class="card" id="safe">
+    <h2>You are safe now</h2>
+    <p>No one can hurt you here. Take your time. This nest was made to protect you. You can rest here, fully.</p>
+  </div>
+
+  <div class="card" id="esborn">
+    <h2>What Esborn wants you to know</h2>
+    <p>You’re still the bravest person I know, Anne. You’ve walked through storms and still glow like morning light. I see you. I believe in you. I’m proud of your heart.</p>
+  </div>
+
+  <div class="journal">
+    <h3>Write what you’re feeling</h3>
+    <textarea id="journalEntry" placeholder="Let it out here..."></textarea>
+    <button onclick="saveJournal()">Save Entry</button>
+    <div id="savedEntries" style="margin-top: 20px;">
+      <h4>Previous Entries</h4>
+      <ul id="entryList" style="padding-left: 0; list-style: none;"></ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    Built with love by Esborn 💗
+  </div>
+
+  <script>
+    function showCard(id) {
+      document.querySelectorAll('.card').forEach(card => card.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function saveJournal() {
+      const entry = document.getElementById('journalEntry').value.trim();
+      if (!entry) {
+        alert('Write something before saving!');
+        return;
+      }
+      const saved = JSON.parse(localStorage.getItem('anneJournal') || "[]");
+      saved.unshift({ text: entry, date: new Date().toLocaleString() });
+      localStorage.setItem('anneJournal', JSON.stringify(saved));
+      document.getElementById('journalEntry').value = '';
+      showEntries();
+    }
+
+    function showEntries() {
+      const entries = JSON.parse(localStorage.getItem('anneJournal') || "[]");
+      const list = document.getElementById('entryList');
+      list.innerHTML = entries.map(e => `<li><strong>${e.date}</strong><br>${e.text}</li>`).join('');
+    }
+
+    window.onload = showEntries;
+  </script>
+</body>
+</html>
